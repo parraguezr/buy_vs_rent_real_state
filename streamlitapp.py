@@ -477,8 +477,8 @@ buy_df = calculate_buy_scenario(inputs)
 rent_invest_df = calculate_rent_investment_scenario(inputs, rent_df, buy_df)
 comparison_result = compare_scenarios(rent_df, buy_df, rent_invest_df, inputs)
 
-
 # --- 6) Display Results ---
+difference = comparison_result["difference_in_net_worth"]
 st.subheader("Rent Scenario (Year-by-Year)")
 st.dataframe(rent_df.style.format("{:,.2f}"))
 
