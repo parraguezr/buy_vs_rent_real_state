@@ -301,49 +301,132 @@ def compare_scenarios(rent_df, buy_df, rent_invest_df, inputs):
 
 
 # --- 3) Streamlit App Layout ---
-st.title("Rent vs. Buy Financial Comparison")
+st.title("Should You Rent or Buy? Financial Calculator")
 st.markdown("""
-This app analyzes the long-term financial implications of **renting** vs. **buying** a home over a user-defined period.
-You can adjust the assumptions in the sidebar, and the app will re-run the calculations.
+This calculator helps you make an informed decision between renting and buying a home by comparing the long-term financial implications.
 """)
 
-# Sidebar for Key Parameters
-st.sidebar.header("General Assumptions")
-analysis_years = st.sidebar.number_input("Analysis Term (years)", min_value=1, max_value=50, value=30)
-inflation_rate = st.sidebar.slider("Annual Inflation Rate (%)", min_value=0.0, max_value=10.0, value=2.5, step=0.1) / 100
-savings_interest_rate = st.sidebar.slider("Savings/Investment Rate (%)", min_value=0.0, max_value=10.0, value=3.5, step=0.1) / 100
-house_appreciation_rate = st.sidebar.slider("House Appreciation Rate (%)", min_value=0.0, max_value=10.0, value=2.5, step=0.1) / 100
-rent_increase_rate = st.sidebar.slider("Rent Increase Rate (%)", min_value=0.0, max_value=10.0, value=1.5, step=0.1) / 100
+# Create tabs for input and results
+tab_input, tab_results = st.tabs(["📝 Input Parameters", "📊 Analysis Results"])
 
-st.sidebar.header("Rent Scenario")
-current_monthly_rent = st.sidebar.number_input("Current Monthly Rent (DKK)", value=17654, step=1000)
-annual_renters_insurance = st.sidebar.number_input("Annual Renter's Insurance (DKK)", value=0, step=500)
+with tab_input:
+    st.header("Input Parameters")
+    st.info("Adjust the parameters below to match your situation. All calculations will update automatically.")
+    
+    # General Parameters in Expandable Section
+    with st.expander("🌍 General Assumptions", expanded=True):
+        col1, col2 = st.columns(2)
+        with col1:
+            analysis_years = st.number_input("Analysis Term (years)", min_value=1, max_value=50, value=30)
+            inflation_rate = st.slider("Annual Inflation Rate (%)", min_value=0.0, max_value=10.0, value=2.5, step=0.1) / 100
+            savings_interest_rate = st.slider("Savings/Investment Rate (%)", min_value=0.0, max_value=10.0, value=3.5, step=0.1) / 100
+        with col2:
+            house_appreciation_rate = st.slider("House Appreciation Rate (%)", min_value=0.0, max_value=10.0, value=2.5, step=0.1) / 100
+            rent_increase_rate = st.slider("Rent Increase Rate (%)", min_value=0.0, max_value=10.0, value=1.5, step=0.1) / 100
 
-st.sidebar.header("Buy Scenario")
-cash_price = st.sidebar.number_input("Purchase Price (DKK)", value=6200000, step=100000)
-downpayment = st.sidebar.number_input("Downpayment (DKK)", value=1200000, step=100000)
-closing_costs = st.sidebar.number_input("Closing Costs (DKK)", value=200000, step=50000)
-mortgage_rate = st.sidebar.slider("Mortgage Interest Rate (%)", min_value=0.0, max_value=15.0, value=5.03, step=0.01) / 100
-mortgage_term_years = st.sidebar.number_input("Mortgage Term (years)", value=30)
-property_value_tax_below_9200k = st.sidebar.number_input("Property Value Tax Rate (<= 9,200,000) (%)", value=0.51, step=0.01, format="%.2f") / 100
-property_value_tax_above_9200k = st.sidebar.number_input("Property Value Tax Rate (> 9,200,000) (%)", value=1.40, step=0.01, format="%.2f") / 100
-land_tax_rate = st.sidebar.number_input("Land Tax Rate (%)", value=0.51, step=0.01, format="%.2f") / 100
-tax_authority_property_value = st.sidebar.number_input("Tax Authority's Property Valuation (DKK)", value=6822000, step=100000)
-tax_authority_land_value = st.sidebar.number_input("Tax Authority's Land Valuation (DKK)", value=3869000, step=100000)
-annual_revaluation_rate = st.sidebar.slider("Annual Revaluation Rate (Tax Valuation) (%)", min_value=0.0, max_value=5.0, value=1.5, step=0.1) / 100
-interest_deduction_rate = st.sidebar.slider("Mortgage Interest Deduction Rate (%)", min_value=0.0, max_value=50.0, value=33.0, step=1.0) / 100
+    # Rent Parameters
+    with st.expander("🏢 Rent Scenario", expanded=True):
+        current_monthly_rent = st.number_input("Current Monthly Rent (DKK)", value=17654, step=1000)
+        annual_renters_insurance = st.number_input("Annual Renter's Insurance (DKK)", value=0, step=500)
 
-st.sidebar.header("Other Yearly Costs (Buy)")
-base_insurance = st.sidebar.number_input("Home Insurance (Year 1)", value=30000, step=1000)
-base_maintenance = st.sidebar.number_input("Maintenance (Year 1)", value=5000, step=1000)
-base_renovations = st.sidebar.number_input("Renovations (Year 1)", value=10000, step=1000)
-community_ownership_cost = st.sidebar.number_input("Monthly Community Ownership Fee (Year 1)", value=5609, step=500)
-monthly_car_lease = st.sidebar.number_input("Monthly Car Lease (if any)", value=0, step=500)
+    # Buy Parameters
+    with st.expander("🏠 Buy Scenario", expanded=True):
+        col1, col2 = st.columns(2)
+        with col1:
+            cash_price = st.number_input("Purchase Price (DKK)", value=6200000, step=100000)
+            downpayment = st.number_input("Downpayment (DKK)", value=1200000, step=100000)
+            closing_costs = st.number_input("Closing Costs (DKK)", value=200000, step=50000)
+        with col2:
+            mortgage_rate = st.slider("Mortgage Interest Rate (%)", min_value=0.0, max_value=15.0, value=5.03, step=0.01) / 100
+            mortgage_term_years = st.number_input("Mortgage Term (years)", value=30)
+            interest_deduction_rate = st.slider("Mortgage Interest Deduction Rate (%)", min_value=0.0, max_value=50.0, value=33.0, step=1.0) / 100
 
-st.sidebar.header("Selling Assumptions")
-agent_commission_rate = st.sidebar.slider("Agent Commission Rate (%)", min_value=0.0, max_value=10.0, value=2.0, step=0.1) / 100
-capital_gains_tax_rate = st.sidebar.slider("Capital Gains Tax Rate (%)", min_value=0.0, max_value=50.0, value=0.0, step=1.0) / 100
+    # Property Tax Parameters
+    with st.expander("💰 Property Taxes", expanded=False):
+        col1, col2 = st.columns(2)
+        with col1:
+            property_value_tax_below_9200k = st.number_input("Property Value Tax Rate (<= 9,200,000) (%)", value=0.51, step=0.01, format="%.2f") / 100
+            property_value_tax_above_9200k = st.number_input("Property Value Tax Rate (> 9,200,000) (%)", value=1.40, step=0.01, format="%.2f") / 100
+            land_tax_rate = st.number_input("Land Tax Rate (%)", value=0.51, step=0.01, format="%.2f") / 100
+        with col2:
+            tax_authority_property_value = st.number_input("Tax Authority's Property Valuation (DKK)", value=6822000, step=100000)
+            tax_authority_land_value = st.number_input("Tax Authority's Land Valuation (DKK)", value=3869000, step=100000)
+            annual_revaluation_rate = st.slider("Annual Revaluation Rate (Tax Valuation) (%)", min_value=0.0, max_value=5.0, value=1.5, step=0.1) / 100
 
+    # Other Costs
+    with st.expander("🔧 Other Ownership Costs", expanded=False):
+        col1, col2 = st.columns(2)
+        with col1:
+            base_insurance = st.number_input("Home Insurance (Year 1)", value=30000, step=1000)
+            base_maintenance = st.number_input("Maintenance (Year 1)", value=5000, step=1000)
+        with col2:
+            base_renovations = st.number_input("Renovations (Year 1)", value=10000, step=1000)
+            community_ownership_cost = st.number_input("Monthly Community Ownership Fee (Year 1)", value=5609, step=500)
+            monthly_car_lease = st.number_input("Monthly Car Lease (if any)", value=0, step=500)
+
+    # Selling Costs
+    with st.expander("🏷️ Future Selling Costs", expanded=False):
+        col1, col2 = st.columns(2)
+        with col1:
+            agent_commission_rate = st.slider("Agent Commission Rate (%)", min_value=0.0, max_value=10.0, value=2.0, step=0.1) / 100
+        with col2:
+            capital_gains_tax_rate = st.slider("Capital Gains Tax Rate (%)", min_value=0.0, max_value=50.0, value=0.0, step=1.0) / 100
+
+with tab_results:
+    # Quick Summary Box
+    st.header("Summary")
+    difference = comparison_result["difference_in_net_worth"]
+    if difference > 0:
+        st.success(
+            f"After {analysis_years} years, **buying** leads to **{abs(difference):,.0f} DKK more** net worth than renting."
+        )
+    else:
+        st.success(
+            f"After {analysis_years} years, **renting** leads to **{abs(difference):,.0f} DKK more** net worth than buying."
+        )
+
+    # Key Metrics
+    st.subheader("Key Financial Metrics")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.metric("Final Net Worth (Buying)", 
+                f"{comparison_result['final_net_equity_buying']:,.0f} DKK",
+                f"{comparison_result['difference_in_net_worth']:,.0f} DKK")
+        st.metric("Total Buy Outflow", f"{comparison_result['total_buy_outflow']:,.0f} DKK")
+    with col2:
+        st.metric("Final Net Worth (Renting)", 
+                f"{comparison_result['final_rent_net_worth']:,.0f} DKK")
+        st.metric("Total Rent Outflow", f"{comparison_result['total_rent_outflow']:,.0f} DKK")
+
+    # Key Visualizations
+    st.subheader("Key Comparisons")
+    tab_costs, tab_equity, tab_detailed = st.tabs(["💰 Cost Comparison", "📈 Equity & Investment", "📊 Detailed Analysis"])
+
+    with tab_costs:
+        st.pyplot(fig1)  # Annual Outflow comparison
+        st.pyplot(fig8)  # Cumulative Outflow comparison
+        st.pyplot(fig9)  # Monthly Cost Breakdown
+
+    with tab_equity:
+        st.pyplot(fig6)  # Mortgage Balance vs House Value
+        st.pyplot(fig7)  # Net Worth Difference
+        st.pyplot(fig3)  # Net Equity Over Time
+
+    with tab_detailed:
+        st.subheader("Detailed Year-by-Year Data")
+        tab_rent, tab_buy, tab_invest = st.tabs(["Rent Scenario", "Buy Scenario", "Investment Scenario"])
+        
+        with tab_rent:
+            st.dataframe(rent_df.style.format("{:,.2f}"))
+            st.pyplot(fig5)  # Rent Cost Breakdown
+
+        with tab_buy:
+            st.dataframe(buy_df.style.format("{:,.2f}"))
+            st.pyplot(fig4)  # Buy Cost Breakdown
+
+        with tab_invest:
+            st.dataframe(rent_invest_df.style.format("{:,.2f}"))
+            st.pyplot(fig2)  # Investment Growth
 
 # --- 4) Build 'inputs' Dictionary from Sidebar ---
 inputs = {
