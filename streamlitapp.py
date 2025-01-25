@@ -462,5 +462,103 @@ ax3.legend()
 ax3.grid(True)
 st.pyplot(fig3)
 
+# Additional Visualizations
+st.subheader("Additional Visual Comparisons")
+
+# 1) Stacked Bar Chart: Buy Scenario Cost Breakdown (Separate Principal & Interest)
+cost_components_buy = pd.DataFrame({
+    'year': buy_df['year'],
+    'Principal': buy_df['principal_paid'],
+    'Interest': buy_df['interest_paid'],
+    'Property Tax': buy_df['property_value_tax'],
+    'Land Tax': buy_df['land_tax'],
+    'Insurance': buy_df['insurance'],
+    'Maintenance': buy_df['maintenance'],
+    'Renovations': buy_df['renovations'],
+    'Community Ownership Cost': buy_df['community_ownership_cost'],
+})
+cost_components_buy.set_index('year', inplace=True)
+
+fig4, ax4 = plt.subplots(figsize=(10, 6))
+cost_components_buy.plot(kind='bar', stacked=True, ax=ax4)
+ax4.set_title("Buy Scenario: Yearly Cost Breakdown (Stacked) - Principal vs. Interest")
+ax4.set_xlabel("Year")
+ax4.set_ylabel("Cost (DKK)")
+ax4.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3)
+ax4.grid(True)
+st.pyplot(fig4)
+
+# 2) Stacked Bar Chart: Rent Scenario Cost Breakdown
+cost_components_rent = pd.DataFrame({
+    'year': rent_df['year'],
+    'Rent': rent_df['annual_rent'],
+    'Renter Insurance': rent_df['renters_insurance']
+})
+cost_components_rent.set_index('year', inplace=True)
+
+fig5, ax5 = plt.subplots(figsize=(10, 6))
+cost_components_rent.plot(kind='bar', stacked=True, color=['#1f77b4', '#ff7f0e'], ax=ax5)
+ax5.set_title("Rent Scenario: Yearly Cost Breakdown (Stacked)")
+ax5.set_xlabel("Year")
+ax5.set_ylabel("Cost (DKK)")
+ax5.legend(bbox_to_anchor=(1.02, 1), loc='upper left')
+ax5.grid(True)
+st.pyplot(fig5)
+
+# 3) Mortgage Balance vs. House Value Over Time (Buy Scenario)
+fig6, ax6 = plt.subplots(figsize=(10, 6))
+ax6.plot(buy_df["year"], buy_df["mortgage_balance_end"], label="Mortgage Balance", marker='o', color='red')
+ax6.plot(buy_df["year"], buy_df["house_value_end"], label="House Value", marker='o', color='green')
+ax6.set_title("Mortgage Balance vs. House Value Over Time (Buy)")
+ax6.set_xlabel("Year")
+ax6.set_ylabel("DKK")
+ax6.grid(True)
+ax6.legend()
+st.pyplot(fig6)
+
+# 4) Difference in Net Worth Each Year (Buy - Rent)
+diff_df = pd.DataFrame({
+    'year': buy_df['year'],
+    'net_equity_buy': buy_df['net_equity_end'],
+    'net_worth_rent': rent_invest_df['investment_end']
+})
+diff_df['difference'] = diff_df['net_equity_buy'] - diff_df['net_worth_rent']
+
+fig7, ax7 = plt.subplots(figsize=(10, 6))
+ax7.plot(diff_df["year"], diff_df["difference"], marker='o', color='purple', label="Net Worth Difference (Buy - Rent)")
+ax7.set_title("Difference in Net Worth Over Time")
+ax7.set_xlabel("Year")
+ax7.set_ylabel("DKK")
+ax7.grid(True)
+ax7.axhline(y=0, color='black', linestyle='--')
+ax7.legend()
+st.pyplot(fig7)
+
+# 5) Cumulative Outflow Comparison (Rent vs. Buy)
+rent_df['cumulative_rent_outflow'] = rent_df['total_rent_cost'].cumsum()
+buy_df['cumulative_buy_outflow'] = buy_df['total_outflow'].cumsum()
+
+fig8, ax8 = plt.subplots(figsize=(10, 6))
+ax8.plot(rent_df["year"], rent_df["cumulative_rent_outflow"], label="Cumulative Rent Outflow", marker='o')
+ax8.plot(buy_df["year"], buy_df["cumulative_buy_outflow"], label="Cumulative Buy Outflow", marker='o')
+ax8.set_title("Cumulative Outflow: Renting vs. Buying")
+ax8.set_xlabel("Year")
+ax8.set_ylabel("Total Outflow (DKK)")
+ax8.grid(True)
+ax8.legend()
+st.pyplot(fig8)
+
+# 6) Stacked Bar Chart: Buy Scenario Average Monthly Cost Breakdown (First 3 Years)
+cost_components_buy_monthly = cost_components_buy.loc[cost_components_buy.index <= 3].div(12)
+
+fig9, ax9 = plt.subplots(figsize=(10, 6))
+cost_components_buy_monthly.plot(kind='bar', stacked=True, ax=ax9)
+ax9.set_title("Buy Scenario: Average Monthly Cost Breakdown (First 3 Years)")
+ax9.set_xlabel("Year")
+ax9.set_ylabel("Cost (DKK)")
+ax9.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3)
+ax9.grid(True)
+st.pyplot(fig9)
+
 st.write("Adjust the sliders in the sidebar to explore different assumptions!")
 
