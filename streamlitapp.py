@@ -310,10 +310,10 @@ You can adjust the assumptions in the sidebar, and the app will re-run the calcu
 # Sidebar for Key Parameters
 st.sidebar.header("General Assumptions")
 analysis_years = st.sidebar.number_input("Analysis Term (years)", min_value=1, max_value=50, value=30)
-inflation_rate = st.sidebar.slider("Annual Inflation Rate", min_value=0.0, max_value=0.1, value=0.025, step=0.001)
-savings_interest_rate = st.sidebar.slider("Savings/Investment Rate", min_value=0.0, max_value=0.1, value=0.035, step=0.001)
-house_appreciation_rate = st.sidebar.slider("House Appreciation Rate", min_value=0.0, max_value=0.1, value=0.025, step=0.001)
-rent_increase_rate = st.sidebar.slider("Rent Increase Rate", min_value=0.0, max_value=0.1, value=0.015, step=0.001)
+inflation_rate = st.sidebar.slider("Annual Inflation Rate (%)", min_value=0.0, max_value=10.0, value=2.5, step=0.1) / 100
+savings_interest_rate = st.sidebar.slider("Savings/Investment Rate (%)", min_value=0.0, max_value=10.0, value=3.5, step=0.1) / 100
+house_appreciation_rate = st.sidebar.slider("House Appreciation Rate (%)", min_value=0.0, max_value=10.0, value=2.5, step=0.1) / 100
+rent_increase_rate = st.sidebar.slider("Rent Increase Rate (%)", min_value=0.0, max_value=10.0, value=1.5, step=0.1) / 100
 
 st.sidebar.header("Rent Scenario")
 current_monthly_rent = st.sidebar.number_input("Current Monthly Rent (DKK)", value=17654, step=1000)
@@ -323,15 +323,15 @@ st.sidebar.header("Buy Scenario")
 cash_price = st.sidebar.number_input("Purchase Price (DKK)", value=6200000, step=100000)
 downpayment = st.sidebar.number_input("Downpayment (DKK)", value=1200000, step=100000)
 closing_costs = st.sidebar.number_input("Closing Costs (DKK)", value=200000, step=50000)
-mortgage_rate = st.sidebar.slider("Mortgage Interest Rate", min_value=0.0, max_value=0.15, value=0.0503, step=0.0001)
+mortgage_rate = st.sidebar.slider("Mortgage Interest Rate (%)", min_value=0.0, max_value=15.0, value=5.03, step=0.01) / 100
 mortgage_term_years = st.sidebar.number_input("Mortgage Term (years)", value=30)
-property_value_tax_below_9200k = st.sidebar.number_input("Property Value Tax Rate (<= 9,200,000)", value=0.0051, step=0.0001, format="%.4f")
-property_value_tax_above_9200k = st.sidebar.number_input("Property Value Tax Rate (> 9,200,000)", value=0.0140, step=0.0001, format="%.4f")
-land_tax_rate = st.sidebar.number_input("Land Tax Rate", value=0.0051, step=0.0001, format="%.4f")
+property_value_tax_below_9200k = st.sidebar.number_input("Property Value Tax Rate (<= 9,200,000) (%)", value=0.51, step=0.01, format="%.2f") / 100
+property_value_tax_above_9200k = st.sidebar.number_input("Property Value Tax Rate (> 9,200,000) (%)", value=1.40, step=0.01, format="%.2f") / 100
+land_tax_rate = st.sidebar.number_input("Land Tax Rate (%)", value=0.51, step=0.01, format="%.2f") / 100
 tax_authority_property_value = st.sidebar.number_input("Tax Authority's Property Valuation (DKK)", value=6822000, step=100000)
 tax_authority_land_value = st.sidebar.number_input("Tax Authority's Land Valuation (DKK)", value=3869000, step=100000)
-annual_revaluation_rate = st.sidebar.slider("Annual Revaluation Rate (Tax Valuation)", min_value=0.0, max_value=0.05, value=0.015, step=0.001)
-interest_deduction_rate = st.sidebar.slider("Mortgage Interest Deduction Rate", min_value=0.0, max_value=0.5, value=0.33, step=0.01)
+annual_revaluation_rate = st.sidebar.slider("Annual Revaluation Rate (Tax Valuation) (%)", min_value=0.0, max_value=5.0, value=1.5, step=0.1) / 100
+interest_deduction_rate = st.sidebar.slider("Mortgage Interest Deduction Rate (%)", min_value=0.0, max_value=50.0, value=33.0, step=1.0) / 100
 
 st.sidebar.header("Other Yearly Costs (Buy)")
 base_insurance = st.sidebar.number_input("Home Insurance (Year 1)", value=30000, step=1000)
@@ -341,8 +341,8 @@ community_ownership_cost = st.sidebar.number_input("Monthly Community Ownership 
 monthly_car_lease = st.sidebar.number_input("Monthly Car Lease (if any)", value=0, step=500)
 
 st.sidebar.header("Selling Assumptions")
-agent_commission_rate = st.sidebar.slider("Agent Commission Rate", min_value=0.0, max_value=0.1, value=0.02, step=0.001)
-capital_gains_tax_rate = st.sidebar.slider("Capital Gains Tax Rate", min_value=0.0, max_value=0.5, value=0.0, step=0.01)
+agent_commission_rate = st.sidebar.slider("Agent Commission Rate (%)", min_value=0.0, max_value=10.0, value=2.0, step=0.1) / 100
+capital_gains_tax_rate = st.sidebar.slider("Capital Gains Tax Rate (%)", min_value=0.0, max_value=50.0, value=0.0, step=1.0) / 100
 
 
 # --- 4) Build 'inputs' Dictionary from Sidebar ---
