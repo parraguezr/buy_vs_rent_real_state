@@ -375,58 +375,62 @@ with tab_input:
 with tab_results:
     # Quick Summary Box
     st.header("Summary")
-    difference = comparison_result["difference_in_net_worth"]
-    if difference > 0:
-        st.success(
-            f"After {analysis_years} years, **buying** leads to **{abs(difference):,.0f} DKK more** net worth than renting."
-        )
+    # Ensure comparison_result is defined
+    if 'comparison_result' not in locals():
+        st.error("Please provide input parameters and run the calculations first.")
     else:
-        st.success(
-            f"After {analysis_years} years, **renting** leads to **{abs(difference):,.0f} DKK more** net worth than buying."
-        )
+        difference = comparison_result["difference_in_net_worth"]
+        if difference > 0:
+            st.success(
+                f"After {analysis_years} years, **buying** leads to **{abs(difference):,.0f} DKK more** net worth than renting."
+            )
+        else:
+            st.success(
+                f"After {analysis_years} years, **renting** leads to **{abs(difference):,.0f} DKK more** net worth than buying."
+            )
 
-    # Key Metrics
-    st.subheader("Key Financial Metrics")
-    col1, col2 = st.columns(2)
-    with col1:
-        st.metric("Final Net Worth (Buying)", 
-                f"{comparison_result['final_net_equity_buying']:,.0f} DKK",
-                f"{comparison_result['difference_in_net_worth']:,.0f} DKK")
-        st.metric("Total Buy Outflow", f"{comparison_result['total_buy_outflow']:,.0f} DKK")
-    with col2:
-        st.metric("Final Net Worth (Renting)", 
-                f"{comparison_result['final_rent_net_worth']:,.0f} DKK")
-        st.metric("Total Rent Outflow", f"{comparison_result['total_rent_outflow']:,.0f} DKK")
+        # Key Metrics
+        st.subheader("Key Financial Metrics")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.metric("Final Net Worth (Buying)", 
+                    f"{comparison_result['final_net_equity_buying']:,.0f} DKK",
+                    f"{comparison_result['difference_in_net_worth']:,.0f} DKK")
+            st.metric("Total Buy Outflow", f"{comparison_result['total_buy_outflow']:,.0f} DKK")
+        with col2:
+            st.metric("Final Net Worth (Renting)", 
+                    f"{comparison_result['final_rent_net_worth']:,.0f} DKK")
+            st.metric("Total Rent Outflow", f"{comparison_result['total_rent_outflow']:,.0f} DKK")
 
-    # Key Visualizations
-    st.subheader("Key Comparisons")
-    tab_costs, tab_equity, tab_detailed = st.tabs(["💰 Cost Comparison", "📈 Equity & Investment", "📊 Detailed Analysis"])
+        # Key Visualizations
+        st.subheader("Key Comparisons")
+        tab_costs, tab_equity, tab_detailed = st.tabs(["💰 Cost Comparison", "📈 Equity & Investment", "📊 Detailed Analysis"])
 
-    with tab_costs:
-        st.pyplot(fig1)  # Annual Outflow comparison
-        st.pyplot(fig8)  # Cumulative Outflow comparison
-        st.pyplot(fig9)  # Monthly Cost Breakdown
+        with tab_costs:
+            st.pyplot(fig1)  # Annual Outflow comparison
+            st.pyplot(fig8)  # Cumulative Outflow comparison
+            st.pyplot(fig9)  # Monthly Cost Breakdown
 
-    with tab_equity:
-        st.pyplot(fig6)  # Mortgage Balance vs House Value
-        st.pyplot(fig7)  # Net Worth Difference
-        st.pyplot(fig3)  # Net Equity Over Time
+        with tab_equity:
+            st.pyplot(fig6)  # Mortgage Balance vs House Value
+            st.pyplot(fig7)  # Net Worth Difference
+            st.pyplot(fig3)  # Net Equity Over Time
 
-    with tab_detailed:
-        st.subheader("Detailed Year-by-Year Data")
-        tab_rent, tab_buy, tab_invest = st.tabs(["Rent Scenario", "Buy Scenario", "Investment Scenario"])
-        
-        with tab_rent:
-            st.dataframe(rent_df.style.format("{:,.2f}"))
-            st.pyplot(fig5)  # Rent Cost Breakdown
+        with tab_detailed:
+            st.subheader("Detailed Year-by-Year Data")
+            tab_rent, tab_buy, tab_invest = st.tabs(["Rent Scenario", "Buy Scenario", "Investment Scenario"])
+            
+            with tab_rent:
+                st.dataframe(rent_df.style.format("{:,.2f}"))
+                st.pyplot(fig5)  # Rent Cost Breakdown
 
-        with tab_buy:
-            st.dataframe(buy_df.style.format("{:,.2f}"))
-            st.pyplot(fig4)  # Buy Cost Breakdown
+            with tab_buy:
+                st.dataframe(buy_df.style.format("{:,.2f}"))
+                st.pyplot(fig4)  # Buy Cost Breakdown
 
-        with tab_invest:
-            st.dataframe(rent_invest_df.style.format("{:,.2f}"))
-            st.pyplot(fig2)  # Investment Growth
+            with tab_invest:
+                st.dataframe(rent_invest_df.style.format("{:,.2f}"))
+                st.pyplot(fig2)  # Investment Growth
 
 # --- 4) Build 'inputs' Dictionary from Sidebar ---
 inputs = {
